@@ -1,0 +1,32 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:h2:mem:orderdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    # url: jdbc:mysql://localhost:3306/order_db?createDatabaseIfNotExist=true
+    # driver-class-name: com.mysql.cj.jdbc.Driver
+    # username: root
+    # password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+jwt:
+  # MUST match the secret in auth-service so tokens verify correctly here.
+  secret: "5367566B59703373367639792F423F4528482B4D6251655468576D5A713474"
+
+# product-service base URL, used to validate product ids / fetch price at order time
+services:
+  product-service:
+    url: http://localhost:8082
