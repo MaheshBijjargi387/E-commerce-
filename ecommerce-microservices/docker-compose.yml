@@ -1,0 +1,53 @@
+version: "3.8"
+
+# Optional: run each service in a container with MySQL instead of the default
+# in-memory H2 database. Update each service's application.yml datasource
+# section to the commented-out MySQL lines before using this.
+#
+# Usage:
+#   docker compose up --build
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - mysql
+      - product-service
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - auth-service
+      - product-service
+      - order-service
+
+volumes:
+  mysql_data:
